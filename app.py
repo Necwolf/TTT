@@ -15,9 +15,9 @@ def clean_json(obj):
             obj.pop('options', None)
 
         return {
-            k: v_cleaned for k, v in (
-                (k, clean_json(v)) for k, v in obj.items()
-            ) if v_cleaned is not None
+            k: v_cleaned
+            for k, v in obj.items()
+            if (v_cleaned := clean_json(v)) is not None
         }
 
     elif isinstance(obj, list):
