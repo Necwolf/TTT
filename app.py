@@ -68,7 +68,8 @@ def tally_webhook():
 
     flat_data = flatten_fields(raw_data)
     print("CLEANED:", flat_data)
-
+    name = flat_data.get('👤CONTACT PERSON "Товари":')
+    print(name)
     return jsonify({"status": "ok"}), 200
 # def tally_webhook():
 #     raw_data = request.json
