@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import os
-
+from threading import Thread
 import telebot
 
 TOKEN = '1402083780:AAFI3e8sgo6C1VL71LOi0Wf3MzLXJex6YUY'
@@ -19,24 +19,20 @@ def echo_message(message):
 
 
 
+
 @app.route('/' + TOKEN, methods=['POST'])
 def getMessage():
-    # Лог заголовков запроса
-    print("\n--- TELEGRAM WEBHOOK CALL ---")
-    print("HEADERS:", dict(request.headers))
+    json_string = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_string)
 
-    # Сырые данные тела запроса
-    raw_data = request.get_data()
-    print("RAW DATA:", raw_data)
+    print("--- PROCESSING UPDATE ---")
+    print(update)
 
-    # Попробуй декодировать как JSON
-    try:
-        json_data = raw_data.decode('utf-8')
-        print("DECODED JSON:", json_data)
-        update = telebot.types.Update.de_json(json_data)
+    def process():
+        print("START HANDLER CALL ATTEMPT")
         bot.process_new_updates([update])
-    except Exception as e:
-        print("ERROR PARSING UPDATE:", str(e))
+
+    Thread(target=process).start()  # Асинхронная обработка
 
     return "!", 200
 
