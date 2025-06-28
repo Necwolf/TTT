@@ -9,6 +9,7 @@ bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 @bot.message_handler(commands=['start'])
 def start(message):
+    print("START HANDLER TRIGGERED")
     bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
 
 
@@ -47,8 +48,6 @@ def webhook():
     return "!", 200
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
 
 @app.route('/tally-webhook', methods=['POST'])
 def tally_webhook():
@@ -119,6 +118,7 @@ def flatten_fields(data):
 
     return result
 
-
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)), threaded=True)
 
 
