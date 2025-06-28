@@ -7,6 +7,8 @@ TOKEN = '1402083780:AAFI3e8sgo6C1VL71LOi0Wf3MzLXJex6YUY'
 bot = telebot.TeleBot(TOKEN)
 
 app = Flask(__name__)
+
+iduser_test = "188539449"
 @bot.message_handler(commands=['start'])
 def start(message):
     print("START HANDLER TRIGGERED")
@@ -54,6 +56,8 @@ def tally_webhook():
     print("CLEANED:", flat_data)
     name = flat_data.get('👤CONTACT PERSON "Товари":')
     print(name)
+    bot.send_message(iduser_test, name)
+
     return jsonify({"status": "ok"}), 200
 def clean_json(obj):
     if isinstance(obj, dict):
