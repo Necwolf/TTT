@@ -16,18 +16,19 @@ iduser_test = "188539449"
 def getMessage():
     json_string = request.get_data().decode('utf-8')
     update = telebot.types.Update.de_json(json_string)
+    message = update.message
 
     print("--- PROCESSING UPDATE ---")
-    print(update)
+    print("TEXT:", message.text)
 
-    def process():
-        print("START HANDLER CALL ATTEMPT")
-        bot.process_new_updates([update])
-
-    Thread(target=process).start()  # Асинхронная обработка
+    if message.text == "/start":
+        print(">>> START HANDLER TRIGGERED")
+        bot.reply_to(message, f"Hello, {message.from_user.first_name}")
+    else:
+        print(">>> ECHO HANDLER TRIGGERED")
+        bot.reply_to(message, message.text)
 
     return "!", 200
-
 
 @app.route("/")
 def webhook():
