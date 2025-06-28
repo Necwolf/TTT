@@ -1,7 +1,50 @@
 from flask import Flask, request, jsonify
+import os
+
+import telebot
+
+TOKEN = '1402083780:AAFI3e8sgo6C1VL71LOi0Wf3MzLXJex6YUY'
+bot = telebot.TeleBot(TOKEN)
 
 app = Flask(__name__)
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
 
+
+@bot.message_handler(func=lambda message: True, content_types=['text'])
+def echo_message(message):
+    bot.reply_to(message, message.text)
+
+
+@app.route('/' + TOKEN, methods=['POST'])
+def getMessage():
+    json_string = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return "!", 200
+
+
+@app.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://ttt-1-rpmm.onrender.com/' + TOKEN)
+    return "!", 200
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+
+@app.route('/tally-webhook', methods=['POST'])
+def tally_webhook():
+    raw_data = request.json
+    # print("RAW:", raw_data)
+
+    flat_data = flatten_fields(raw_data)
+    print("CLEANED:", flat_data)
+    name = flat_data.get('👤CONTACT PERSON "Товари":')
+    print(name)
+    return jsonify({"status": "ok"}), 200
 def clean_json(obj):
     if isinstance(obj, dict):
         if 'value' in obj and obj['value'] is None:
@@ -61,24 +104,6 @@ def flatten_fields(data):
 
     return result
 
-@app.route('/tally-webhook', methods=['POST'])
-def tally_webhook():
-    raw_data = request.json
-    print("RAW:", raw_data)
 
-    flat_data = flatten_fields(raw_data)
-    print("CLEANED:", flat_data)
-    name = flat_data.get('👤CONTACT PERSON "Товари":')
-    print(name)
-    return jsonify({"status": "ok"}), 200
-# def tally_webhook():
-#     raw_data = request.json
-#     # print("Tally webhook received:", raw_data)
-#
-#     cleaned_data = clean_json(raw_data)
-#     print("Cleaned webhook data:", cleaned_data)
-#
-#     # Можна також тут зберегти cleaned_data у файл, базу або надіслати далі
-#
-#     return jsonify({"status": "ok"}), 200
+
 
