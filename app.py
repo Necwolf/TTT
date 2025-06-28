@@ -9,16 +9,6 @@ bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
 iduser_test = "188539449"
-@bot.message_handler(commands=['start'])
-def start(message):
-    print("START HANDLER TRIGGERED")
-    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
-
-
-@bot.message_handler(func=lambda message: True, content_types=['text'])
-def echo_message(message):
-    bot.reply_to(message, message.text)
-
 
 
 
@@ -117,6 +107,16 @@ def flatten_fields(data):
         result[label] = value
 
     return result
+@bot.message_handler(commands=['start'])
+def start(message):
+    print("START HANDLER TRIGGERED")
+    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
+
+
+@bot.message_handler(func=lambda message: True, content_types=['text'])
+def echo_message(message):
+    bot.reply_to(message, message.text)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)), threaded=True)
