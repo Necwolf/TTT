@@ -31,18 +31,28 @@ def flatten_fields(data):
     return result
 
 def format_travel_message(data: dict) -> str:
-    agenda = data.get("Адженда", {})
-    if isinstance(agenda, str):
-        # Пробуем заменить одинарные кавычки на двойные, чтобы распарсить как JSON
-        try:
-            agenda = json.loads(agenda.replace("'", '"'))
-        except json.JSONDecodeError:
-            agenda = {}
+    def extract_files(field_name):
+        result = []
+        value = data.get(field_name)
+        if isinstance(value, str):
+            try:
+                parsed = json.loads(value.replace("'", '"'))
+                if isinstance(parsed, dict):
+                    result.append(parsed)
+                elif isinstance(parsed, list):
+                    result.extend(parsed)
+            except json.JSONDecodeError:
+                pass
+        elif isinstance(value, dict):
+            result.append(value)
+        elif isinstance(value, list):
+            result.extend(value)
+        return result
 
-    agenda_url = agenda.get("url", "")
+    agenda_files = extract_files("Адженда")
+    invite_files = extract_files("Запрошення")
 
-    try:
-        message = f"""🚗 Відрядження
+    message = f"""🚗 Відрядження
 
 👤 <b>{data.get('Імʼя:', '')} {data.get('Прізвище:', '')}</b>
 📧 {data.get('Електронна адреса:', '')}
@@ -58,12 +68,22 @@ def format_travel_message(data: dict) -> str:
 
 🎯 Мета: {data.get('Мета поїздки', '')}
 """
-        if agenda_url:
-            message += f'📎 <a href="{agenda_url}">Адженда (PDF)</a>\n'
 
-        if data.get("Підтвердження (Вказані дані є коректними)"):
-            message += "✅ Дані підтверджено"
+    def render_file_list(files, label):
+        out = f"\n📎 <b>{label}:</b>\n"
+        for file in files:
+            name = file.get("name", "файл")
+            url = file.get("url")
+            if url:
+                out += f'🔗 <a href="{url}">{name}</a>\n'
+        return out
 
-        return message.strip()
-    except Exception as e:
-        return f"⚠ Помилка при форматуванні повідомлення: {str(e)}"
+    if agenda_files:
+        message += render_file_list(agenda_files, "Адженда")
+    if invite_files:
+        message += render_file_list(invite_files, "Запрошення")
+
+    if data.get("Підтвердження (Вказані дані є коректними)"):
+        message += "✅ Дані підтверджено"
+
+    return message.strip()
