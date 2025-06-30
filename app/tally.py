@@ -23,6 +23,6 @@ async def tally_webhook_trip(request: Request):
     print("CLEANED:", flat_data)
 
     message = format_travel_message(flat_data)
-    await bot.send_message(chat_id=iduser_test, text=message, parse_mode="HTML")
+    await bot.send_message(chat_id=iduser_test, text=message, parse_mode="HTML", disable_web_page_preview=True)
     # await bot.send_message(chat_id=iduser_test, text="info delivered")
     return {"status": "ok"}

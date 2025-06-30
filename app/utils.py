@@ -71,8 +71,8 @@ def format_travel_message(data: dict) -> str:
 
     def render_file_list(files, label):
         out = f"\n📎 <b>{label}:</b>\n"
-        for file in files:
-            name = file.get("name", "файл")
+        for idx, file in enumerate(files, 1):
+            name = file.get("name", f"файл {idx}")
             url = file.get("url")
             if url:
                 out += f'🔗 <a href="{url}">{name}</a>\n'
@@ -87,3 +87,4 @@ def format_travel_message(data: dict) -> str:
         message += "✅ Дані підтверджено"
 
     return message.strip()
+
