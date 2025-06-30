@@ -1,0 +1,16 @@
+from fastapi import Request
+from app.bot import bot
+from app.utils import flatten_fields
+
+iduser_test = "188539449"
+
+async def tally_webhook(request: Request):
+    raw_data = await request.json()
+    flat_data = flatten_fields(raw_data)
+    print("CLEANED:", flat_data)
+
+    name = flat_data.get('👤CONTACT PERSON "Товари":')
+    print(name)
+
+    await bot.send_message(chat_id=iduser_test, text=name or "No name provided")
+    return {"status": "ok"}
