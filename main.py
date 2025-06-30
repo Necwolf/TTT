@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from app.bot import bot, dp, TOKEN
 from app.handlers import register_handlers
-from app.tally import tally_webhook
+from app.tally import tally_webhook, tally_webhook_trip
 from aiogram import types
 
 app = FastAPI()
@@ -18,6 +18,10 @@ async def telegram_webhook(request: Request):
 @app.post("/tally-webhook")
 async def handle_tally_webhook(request: Request):
     return await tally_webhook(request)
+
+@app.post("/tally-webhook-trip")
+async def handle_tally_webhook(request: Request):
+    return await tally_webhook_trip(request)
 
 @app.get("/")
 async def root():
