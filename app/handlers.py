@@ -1,7 +1,8 @@
 from aiogram import Dispatcher, types
+from aiogram.filters import Command
 
 def register_handlers(dp: Dispatcher):
-    @dp.message(commands=["start"])
+    @dp.message(Command("start"))
     async def start_handler(message: types.Message):
         print(">>> START HANDLER TRIGGERED")
         await message.reply(f"Hello, {message.from_user.first_name}")
