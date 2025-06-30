@@ -18,9 +18,9 @@ async def tally_webhook(request: Request):
 
 async def tally_webhook_trip(request: Request):
     raw_data = await request.json()
-    print("RAW DATA:", raw_data)
+    # print("RAW DATA:", raw_data)
     flat_data = flatten_fields(raw_data)
-    # print("CLEANED:", flat_data)
+    print("CLEANED:", flat_data)
 
     # name = flat_data.get('👤CONTACT PERSON "Товари":')
     # print(name)
