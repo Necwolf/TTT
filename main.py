@@ -22,7 +22,6 @@ async def telegram_webhook(request: Request):
 @router.api_route("/up", methods=["GET", "POST"])
 async def up(request: Request):
     if request.method == "POST":
-        data = await request.json()
         # обробка POST
         return {"status": "POST accepted"}
     elif request.method == "GET":
