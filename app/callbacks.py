@@ -1,5 +1,7 @@
 from aiogram import Router, types
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
+from app.utils import generate_pdf_from_data  # якщо перенесеш туди
+from app.parser import extract_data_from_message
 
 router = Router()
 
@@ -20,6 +22,7 @@ async def handle_confirm(callback: types.CallbackQuery):
 
 @router.callback_query(lambda c: c.data == "send_email")
 async def handle_email(callback: types.CallbackQuery):
-    text = callback.message.text or callback.message.caption
-    await callback.answer("📤 Формується email + PDF", show_alert=True)
-    print("EMAIL TRIGGERED\n", text)
+    text = callback.message.text
+    data = extract_data_from_message(text)
+    pdf_path = generate_pdf_from_data(data)
+    await callback.message.answer_document(FSInputFile(pdf_path), caption="📝 Згенеровано PDF")

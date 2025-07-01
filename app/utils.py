@@ -1,4 +1,7 @@
 import json
+from jinja2 import Environment, FileSystemLoader
+from weasyprint import HTML
+import uuid
 
 def flatten_fields(data):
     result = {}
@@ -88,3 +91,21 @@ def format_travel_message(data: dict) -> str:
 
     return message.strip()
 
+
+def generate_pdf_from_data(data: dict) -> str:
+    env = Environment(loader=FileSystemLoader("templates"))
+    template = env.get_template("travel.html")
+
+    html_out = template.render({
+        "first_name": data.get("Імʼя:", ""),
+        "last_name": data.get("Прізвище:", ""),
+        "from_city": data.get("Місто виїзду:", ""),
+        "to_city": data.get("Місто надання послуг:", ""),
+        "from_date": data.get("Дата виїзду:", ""),
+        "to_date": data.get("Дата повернення:", ""),
+        "purpose": data.get("Мета поїздки", "")
+    })
+
+    filename = f"/tmp/travel_{uuid.uuid4().hex}.pdf"
+    HTML(string=html_out).write_pdf(filename)
+    return filename
