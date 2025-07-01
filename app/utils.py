@@ -2,6 +2,8 @@ import json
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
 import uuid
+from datetime import datetime
+
 
 def flatten_fields(data):
     result = {}
@@ -32,6 +34,7 @@ def flatten_fields(data):
 
         result[label] = value
     return result
+
 
 def format_travel_message(data: dict) -> str:
     def extract_files(field_name):
@@ -92,7 +95,113 @@ def format_travel_message(data: dict) -> str:
     return message.strip()
 
 
-def generate_pdf_from_data(data: dict) -> str:
+def generate_pdf_from_data(data: dict, template_name: str = "travel_enhanced.html") -> str:
+    """
+    Генерирует PDF из данных формы, используя улучшенный шаблон
+
+    Args:
+        data: Словарь с данными из формы
+        template_name: Имя шаблона (по умолчанию "travel_enhanced.html")
+
+    Returns:
+        str: Путь к сгенерированному PDF файлу
+    """
+    env = Environment(loader=FileSystemLoader("templates"))
+    template = env.get_template(template_name)
+
+    # Функция для обработки файлов
+    def format_files(field_name):
+        files = []
+        value = data.get(field_name, "")
+        if isinstance(value, str) and value:
+            try:
+                parsed = json.loads(value.replace("'", '"'))
+                if isinstance(parsed, dict):
+                    files.append(parsed)
+                elif isinstance(parsed, list):
+                    files.extend(parsed)
+            except json.JSONDecodeError:
+                pass
+        elif isinstance(value, dict):
+            files.append(value)
+        elif isinstance(value, list):
+            files.extend(value)
+
+        # Форматирование списка файлов для отображения
+        if not files:
+            return "-"
+
+        file_list = []
+        for file in files:
+            name = file.get("name", "Файл")
+            url = file.get("url", "")
+            if url:
+                file_list.append(f'<a href="{url}" target="_blank">{name}</a>')
+            else:
+                file_list.append(name)
+
+        return "<br>".join(file_list) if file_list else "-"
+
+    # Функция для генерации номера запроса
+    def generate_req_number():
+        now = datetime.now()
+        return f"REQ-{now.strftime('%d')}/{now.strftime('%y')}"
+
+    # Функция для форматирования ответов Да/Нет
+    def format_yes_no(value):
+        if isinstance(value, str):
+            value = value.lower()
+            if value in ['так', 'yes', 'true', '1', 'да']:
+                return "Так"
+            elif value in ['ні', 'no', 'false', '0', 'нет']:
+                return "Ні"
+        return value if value else "Ні"
+
+    # Подготовка данных для шаблона
+    template_data = {
+        # Заголовок
+        "date_info": datetime.now().strftime("%d.%m.%Y"),
+        "req_number": generate_req_number(),
+
+        # Данные о исполнителе
+        "executor_name": f"{data.get('Імʼя:', '')} {data.get('Прізвище:', '')}".strip(),
+        "email": data.get("Електронна адреса:", ""),
+        "contract_info": data.get("№ Договору / Вид надання послуг:", ""),
+        "project_name": data.get("Проєкт:", ""),
+
+        # Данные о поездке
+        "service_purpose": data.get("Мета поїздки", "Надання послуг поза основним місцем ведення діяльності."),
+        "departure_city": data.get("Місто виїзду:", ""),
+        "service_city": data.get("Місто надання послуг:", ""),
+
+        # Даты и время
+        "departure_date": data.get("Дата виїзду:", ""),
+        "departure_time": data.get("Година виїзду:", ""),
+        "return_date": data.get("Дата повернення:", ""),
+        "return_time": data.get("Година повернення:", ""),
+
+        # Возмещение
+        "transport_compensation": format_yes_no(data.get("За проїзд:", "")),
+        "accommodation_compensation": format_yes_no(data.get("За проживання:", "")),
+
+        # Файлы
+        "invitation_files": format_files("Запрошення"),
+        "agenda_files": format_files("Адженда"),
+    }
+
+    # Рендеринг HTML
+    html_out = template.render(template_data)
+
+    # Генерация PDF
+    filename = f"/tmp/travel_enhanced_{uuid.uuid4().hex}.pdf"
+    HTML(string=html_out).write_pdf(filename)
+    return filename
+
+
+def generate_simple_pdf_from_data(data: dict) -> str:
+    """
+    Оригинальная функция для генерации простого PDF (для обратной совместимости)
+    """
     env = Environment(loader=FileSystemLoader("templates"))
     template = env.get_template("travel.html")
 
