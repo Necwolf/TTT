@@ -34,7 +34,7 @@ async def root():
 @app.get("/up")
 async def up():
 
-    return {"Status": "i`m alive"}
+    return {"Status": "i`m alive"}, 200
 
 if __name__ == "__main__":
     import uvicorn
