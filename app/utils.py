@@ -103,6 +103,13 @@ def generate_pdf_from_data(data: dict) -> str:
         "to_city": data.get("Місто надання послуг:", ""),
         "from_date": data.get("Дата виїзду:", ""),
         "to_date": data.get("Дата повернення:", ""),
+        "from_time": data.get("Година виїзду:", ""),
+        "to_time": data.get("Година повернення:", ""),
+        "email": data.get("Електронна адреса:", ""),
+        "project": data.get("Проєкт:", ""),
+        "contract": data.get("№ Договору / Вид надання послуг:", ""),
+        "housing": data.get("За проживання:", ""),
+        "transport": data.get("За проїзд:", ""),
         "purpose": data.get("Мета поїздки", "")
     })
 
