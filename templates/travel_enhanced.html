@@ -5,169 +5,140 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Інформування про командировку</title>
     <style>
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
         body {
             font-family: 'DejaVu Sans', Arial, sans-serif;
             margin: 0;
-            padding: 20px;
-            font-size: 11pt;
-            line-height: 1.3;
+            padding: 0;
+            font-size: 9pt; /* Уменьшен размер шрифта */
+            line-height: 1.2; /* Уменьшен интервал */
             color: #000;
         }
-
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 10px; /* Уменьшен отступ */
         }
-
         .header h1 {
-            font-size: 14pt;
+            font-size: 12pt; /* Уменьшен размер заголовка */
             font-weight: bold;
-            margin: 0 0 10px 0;
+            margin: 0 0 5px 0;
             text-transform: uppercase;
         }
-
         .header .subtitle {
-            font-size: 11pt;
-            margin-bottom: 20px;
+            font-size: 9pt;
+            margin-bottom: 5px;
         }
-
         .info-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
-
-        .info-row .left {
+        .info-row .left, .info-row .right {
             flex: 1;
+            font-size: 9pt;
         }
-
-        .info-row .right {
-            flex: 1;
-            text-align: right;
-        }
-
         .section {
-            margin-bottom: 25px;
+            margin-bottom: 10px; /* Уменьшен отступ */
         }
-
         .section-title {
             font-weight: bold;
-            font-size: 12pt;
-            margin-bottom: 10px;
+            font-size: 10pt; /* Уменьшен размер */
+            margin-bottom: 5px;
             text-transform: uppercase;
         }
-
         .field {
-            margin-bottom: 8px;
+            margin-bottom: 3px; /* Уменьшен отступ */
         }
-
         .field-label {
             font-weight: bold;
             display: inline-block;
-            min-width: 180px;
+            min-width: 120px; /* Уменьшен минимальный размер */
         }
-
         .field-value {
             display: inline-block;
         }
-
         .travel-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 5px 0; /* Уменьшен отступ */
+            font-size: 8pt; /* Уменьшен размер текста */
         }
-
-        .travel-table th,
-        .travel-table td {
+        .travel-table th, .travel-table td {
             border: 1px solid #000;
-            padding: 8px;
+            padding: 4px; /* Уменьшен отступ */
             text-align: center;
         }
-
         .travel-table th {
             background-color: #f5f5f5;
             font-weight: bold;
         }
-
         .cities-row {
             display: flex;
             justify-content: space-between;
-            margin: 15px 0;
+            margin: 5px 0; /* Уменьшен отступ */
         }
-
         .city-block {
             text-align: center;
             flex: 1;
         }
-
         .city-label {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 2px; /* Уменьшен отступ */
         }
-
         .city-name {
-            font-size: 13pt;
+            font-size: 10pt; /* Уменьшен размер */
             font-weight: bold;
         }
-
         .compensation-row {
             display: flex;
             justify-content: space-between;
-            margin: 15px 0;
+            margin: 5px 0; /* Уменьшен отступ */
         }
-
         .compensation-item {
             display: flex;
             align-items: center;
         }
-
         .compensation-item .label {
-            margin-right: 10px;
+            margin-right: 5px; /* Уменьшен отступ */
             font-weight: bold;
         }
-
         .files-section {
-            margin: 20px 0;
+            margin: 5px 0; /* Уменьшен отступ */
         }
-
         .files-section .file-type {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 2px; /* Уменьшен отступ */
         }
-
         .footer {
-            margin-top: 30px;
-            font-size: 10pt;
+            margin-top: 10px; /* Уменьшен отступ */
+            font-size: 8pt; /* Уменьшен размер */
             border-top: 1px solid #ccc;
-            padding-top: 15px;
+            padding-top: 5px; /* Уменьшен отступ */
         }
-
         .footer-title {
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 3px; /* Уменьшен отступ */
         }
-
         .footer ul {
-            margin: 10px 0;
-            padding-left: 20px;
+            margin: 5px 0; /* Уменьшен отступ */
+            padding-left: 15px; /* Уменьшен отступ */
         }
-
         .footer li {
-            margin-bottom: 3px;
+            margin-bottom: 2px; /* Уменьшен отступ */
         }
-
         .contact-info {
-            margin-top: 15px;
+            margin-top: 5px; /* Уменьшен отступ */
         }
-
         .contact-info .contact-item {
-            margin-bottom: 5px;
+            margin-bottom: 2px; /* Уменьшен отступ */
         }
-
         @media print {
             body {
                 margin: 0;
-                padding: 15px;
+                padding: 0;
             }
         }
     </style>
@@ -176,129 +147,58 @@
     <div class="header">
         <h1>Зміст умов підвищеної складності</h1>
         <div class="subtitle">(мета надання послуг)</div>
-
         <div class="info-row">
-            <div class="left">
-                <strong>Дата інформування:</strong> {{ date_info }}
-            </div>
-            <div class="right">
-                <strong>{{ req_number }}</strong>
-            </div>
+            <div class="left"><strong>Дата інформування:</strong> {{ date_info }}</div>
+            <div class="right"><strong>{{ req_number }}</strong></div>
         </div>
     </div>
 
     <div class="section">
         <div class="section-title">Дані про виконавця</div>
-
-        <div class="field">
-            <span class="field-label">Виконавець:</span>
-            <span class="field-value">{{ executor_name }}</span>
-        </div>
-
-        <div class="field">
-            <span class="field-label">e-mail:</span>
-            <span class="field-value">{{ email }}</span>
-        </div>
-
-        <div class="field">
-            <span class="field-label">№ Договору / Вид надання послуг:</span>
-            <span class="field-value">{{ contract_info }}</span>
-        </div>
-
-        <div class="field">
-            <span class="field-label">Проєкт, у рамках якого надаються послуги:</span>
-            <span class="field-value">{{ project_name }}</span>
-        </div>
+        <div class="field"><span class="field-label">Виконавець:</span><span class="field-value">{{ executor_name }}</span></div>
+        <div class="field"><span class="field-label">e-mail:</span><span class="field-value">{{ email }}</span></div>
+        <div class="field"><span class="field-label">№ Договору / Вид надання послуг:</span><span class="field-value">{{ contract_info }}</span></div>
+        <div class="field"><span class="field-label">Проєкт, у рамках якого надаються послуги:</span><span class="field-value">{{ project_name }}</span></div>
     </div>
 
     <div class="section">
         <div class="section-title">Дані про поїздку</div>
-
-        <div class="field">
-            <span class="field-label">Мета надання послуг:</span>
-            <span class="field-value">{{ service_purpose }}</span>
-        </div>
-
+        <div class="field"><span class="field-label">Мета надання послуг:</span><span class="field-value">{{ service_purpose }}</span></div>
         <div class="cities-row">
-            <div class="city-block">
-                <div class="city-label">Місто виїзду:</div>
-                <div class="city-name">{{ departure_city }}</div>
-            </div>
-            <div class="city-block">
-                <div class="city-label">Місто надання послуг:</div>
-                <div class="city-name">{{ service_city }}</div>
-            </div>
+            <div class="city-block"><div class="city-label">Місто виїзду:</div><div class="city-name">{{ departure_city }}</div></div>
+            <div class="city-block"><div class="city-label">Місто надання послуг:</div><div class="city-name">{{ service_city }}</div></div>
         </div>
-
         <table class="travel-table">
-            <thead>
-                <tr>
-                    <th colspan="2">ВИЇЗД</th>
-                    <th colspan="2">ПОВЕРНЕННЯ</th>
-                </tr>
-                <tr>
-                    <th>Дата</th>
-                    <th>Година</th>
-                    <th>Дата</th>
-                    <th>Година</th>
-                </tr>
+            <thead><tr><th colspan="2">ВИЇЗД</th><th colspan="2">ПОВЕРНЕННЯ</th></tr>
+                <tr><th>Дата</th><th>Година</th><th>Дата</th><th>Година</th></tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>{{ departure_date }}</td>
-                    <td>{{ departure_time }}</td>
-                    <td>{{ return_date }}</td>
-                    <td>{{ return_time }}</td>
-                </tr>
-            </tbody>
+            <tbody><tr><td>{{ departure_date }}</td><td>{{ departure_time }}</td><td>{{ return_date }}</td><td>{{ return_time }}</td></tr></tbody>
         </table>
     </div>
 
     <div class="section">
         <div class="section-title">Відшкодування:</div>
-
         <div class="compensation-row">
-            <div class="compensation-item">
-                <span class="label">За проїзд:</span>
-                <span>{{ transport_compensation }}</span>
-            </div>
-            <div class="compensation-item">
-                <span class="label">За проживання:</span>
-                <span>{{ accommodation_compensation }}</span>
-            </div>
+            <div class="compensation-item"><span class="label">За проїзд:</span><span>{{ transport_compensation }}</span></div>
+            <div class="compensation-item"><span class="label">За проживання:</span><span>{{ accommodation_compensation }}</span></div>
         </div>
     </div>
 
     <div class="section">
         <div class="section-title">Додаткові файли</div>
-
-        <div class="files-section">
-            <div class="file-type">Запрошення:</div>
-            <div>{{ invitation_files|safe }}</div>
-        </div>
-
-        <div class="files-section">
-            <div class="file-type">Адженда:</div>
-            <div>{{ agenda_files|safe }}</div>
-        </div>
+        <div class="files-section"><div class="file-type">Запрошення:</div><div>{{ invitation_files|safe }}</div></div>
+        <div class="files-section"><div class="file-type">Адженда:</div><div>{{ agenda_files|safe }}</div></div>
     </div>
 
     <div class="footer">
         <div class="footer-title">Завершення поїздки та порядок відшкодування витрат:</div>
-
-        <ul>
-            <li>Для відшкодування витрат надайте підтверджуючі документи протягом 5 робочих днів після повернення.</li>
-            <li>Оригінали документів надсилайте до Київського офісу (з приміткою для бухгалтерії), а сканкопії — на <strong>admin-travel@r2p.org.ua</strong> додавши в копію <strong>compensation@r2p.org.ua</strong></li>
-        </ul>
-
+        <ul><li>Для відшкодування витрат надайте підтверджуючі документи протягом 5 робочих днів після повернення.</li>
+            <li>Оригінали документів надсилайте до Київського офісу (з приміткою для бухгалтерії), а сканкопії — на <strong>admin-travel@r2p.org.ua</strong> додавши в копію <strong>compensation@r2p.org.ua</strong></li></ul>
         <div class="footer-title">Перелік необхідних документів:</div>
-        <ul>
-            <li>Звіт про наявність умов підвищеної складності</li>
+        <ul><li>Звіт про наявність умов підвищеної складності</li>
             <li>Квитки (потяг/автобус, авіа — посадкові талони, рахунок, виписка з банку, фіскальний чек за проживання).</li>
             <li>Заповнена форма на відшкодування</li>
-            <li>Роутинг поїздки заповнений в системі Codejig (з підтвердженнями від водія та пасажирів), а також фіскальні чеки, які підтверджують витрати на пальне</li>
-        </ul>
-
+            <li>Роутинг поїздки заповнений в системі Codejig (з підтвердженнями від водія та пасажирів), а також фіскальні чеки, які підтверджують витрати на пальне</li></ul>
         <div class="contact-info">
             <div><strong>У разі виникнення запитань або пропозицій щодо виконання робіт, звертайтеся за наступними контактами:</strong></div>
             <div class="contact-item">• <strong>admin-travel@r2p.org.ua</strong></div>
