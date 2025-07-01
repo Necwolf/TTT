@@ -98,13 +98,6 @@ def format_travel_message(data: dict) -> str:
 def generate_pdf_from_data(data: dict, template_name: str = "travel_enhanced.html") -> str:
     """
     Генерирует PDF из данных формы, используя улучшенный шаблон
-
-    Args:
-        data: Словарь с данными из формы
-        template_name: Имя шаблона (по умолчанию "travel_enhanced.html")
-
-    Returns:
-        str: Путь к сгенерированному PDF файлу
     """
     env = Environment(loader=FileSystemLoader("templates"))
     template = env.get_template(template_name)
@@ -136,11 +129,57 @@ def generate_pdf_from_data(data: dict, template_name: str = "travel_enhanced.htm
             name = file.get("name", "Файл")
             url = file.get("url", "")
             if url:
-                file_list.append(f'<a href="{url}" target="_blank">{name}</a>')
+                # Сокращение длинных URL для лучшего отображения
+                short_url = url[:50] + "..." if len(url) > 50 else url
+                file_list.append(f'<a href="{url}" target="_blank">{name} ({short_url})</a>')
             else:
                 file_list.append(name)
 
         return "<br>".join(file_list) if file_list else "-"
+
+    # Функция для генерации номера запроса
+    def generate_req_number():
+        now = datetime.now()
+        return f"REQ-{now.strftime('%d')}/{now.strftime('%y')}"
+
+    # Функция для форматирования ответов Да/Нет
+    def format_yes_no(value):
+        if isinstance(value, str):
+            value = value.lower()
+            if value in ['так', 'yes', 'true', '1', 'да']:
+                return "Так"
+            elif value in ['ні', 'no', 'false', '0', 'нет']:
+                return "Ні"
+        return value if value else "Ні"
+
+    # Подготовка данных для шаблона
+    template_data = {
+        "date_info": datetime.now().strftime("%d.%m.%Y"),
+        "req_number": generate_req_number(),
+        "executor_name": f"{data.get('Імʼя:', '')} {data.get('Прізвище:', '')}".strip(),
+        "email": data.get("Електронна адреса:", ""),
+        "contract_info": data.get("№ Договору / Вид надання послуг:", ""),
+        "project_name": data.get("Проєкт:", ""),
+        "service_purpose": data.get("Мета поїздки", "Надання послуг поза основним місцем ведення діяльності."),
+        "departure_city": data.get("Місто виїзду:", ""),
+        "service_city": data.get("Місто надання послуг:", ""),
+        "departure_date": data.get("Дата виїзду:", ""),
+        "departure_time": data.get("Година виїзду:", ""),
+        "return_date": data.get("Дата повернення:", ""),
+        "return_time": data.get("Година повернення:", ""),
+        "transport_compensation": format_yes_no(data.get("За проїзд:", "")),
+        "accommodation_compensation": format_yes_no(data.get("За проживання:", "")),
+        "invitation_files": format_files("Запрошення"),
+        "agenda_files": format_files("Адженда"),
+    }
+
+    # Рендеринг HTML
+    html_out = template.render(template_data)
+
+    # Генерация PDF
+    filename = f"/tmp/travel_enhanced_{uuid.uuid4().hex}.pdf"
+    HTML(string=html_out).write_pdf(filename)
+    return filename
 
     # Функция для генерации номера запроса
     def generate_req_number():
