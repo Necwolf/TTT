@@ -3,11 +3,13 @@ from app.bot import bot, dp, TOKEN
 from app.handlers import register_handlers
 from app.tally import tally_webhook, tally_webhook_trip
 from aiogram import types
+from app.callbacks import router as cb_router
 
 app = FastAPI()
 
 # Регистрация Telegram хендлеров
 register_handlers(dp)
+dp.include_router(cb_router)
 
 @app.post(f"/{TOKEN}")
 async def telegram_webhook(request: Request):
