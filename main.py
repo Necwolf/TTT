@@ -31,6 +31,11 @@ async def root():
     await bot.set_webhook(f"https://ttt-1-rpmm.onrender.com/{TOKEN}")
     return {"status": "webhook set"}
 
+@app.get("/up")
+async def up():
+
+    return {"Status": "i`m alive"}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=5000, reload=True)
