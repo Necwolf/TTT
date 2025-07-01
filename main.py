@@ -4,9 +4,11 @@ from app.handlers import register_handlers
 from app.tally import tally_webhook, tally_webhook_trip
 from aiogram import types
 from app.callbacks import router as cb_router
+from fastapi import Request, APIRouter
 
 app = FastAPI()
 
+router = APIRouter()
 # Регистрация Telegram хендлеров
 register_handlers(dp)
 dp.include_router(cb_router)
@@ -31,10 +33,16 @@ async def root():
     await bot.set_webhook(f"https://ttt-1-rpmm.onrender.com/{TOKEN}")
     return {"status": "webhook set"}
 
-@app.get("/up")
-async def up():
+@router.api_route("/up", methods=["GET", "POST"])
+async def up(request: Request):
+    if request.method == "POST":
+        data = await request.json()
+        # обробка POST
+        return {"status": "POST accepted"}
+    elif request.method == "GET":
+        # обробка GET
+        return {"status": "GET ok"}
 
-    return {"Status": "i`m alive"}, 200
 
 if __name__ == "__main__":
     import uvicorn
