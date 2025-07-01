@@ -19,6 +19,17 @@ async def telegram_webhook(request: Request):
     await dp.feed_update(bot, update)
     return {"ok": True}
 
+@router.api_route("/up", methods=["GET", "POST"])
+async def up(request: Request):
+    if request.method == "POST":
+        data = await request.json()
+        # обробка POST
+        return {"status": "POST accepted"}
+    elif request.method == "GET":
+        # обробка GET
+        return {"status": "GET ok"}
+
+
 @app.post("/tally-webhook")
 async def handle_tally_webhook(request: Request):
     return await tally_webhook(request)
@@ -32,16 +43,6 @@ async def root():
     await bot.delete_webhook()
     await bot.set_webhook(f"https://ttt-1-rpmm.onrender.com/{TOKEN}")
     return {"status": "webhook set"}
-
-@router.api_route("/up", methods=["GET", "POST"])
-async def up(request: Request):
-    if request.method == "POST":
-        data = await request.json()
-        # обробка POST
-        return {"status": "POST accepted"}
-    elif request.method == "GET":
-        # обробка GET
-        return {"status": "GET ok"}
 
 
 if __name__ == "__main__":
