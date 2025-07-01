@@ -7,57 +7,95 @@
         body {
             font-family: DejaVu Sans, sans-serif;
             margin: 40px;
+            font-size: 13px;
+            color: #000;
+        }
+        h2 {
+            text-align: center;
+            font-size: 16pt;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            vertical-align: top;
+        }
+        .nowrap {
+            white-space: nowrap;
+        }
+        .no-border td {
+            border: none;
+            padding-top: 30px;
+        }
+        .footer-note {
+            font-size: 11px;
+            margin-top: 40px;
             color: #333;
-        }
-        h1 {
-            color: #2c3e50;
-        }
-        .section {
-            margin-bottom: 15px;
-        }
-        .label {
-            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h1>Інформація про відрядження</h1>
+    <h2>ІНФОРМАЦІЯ ПРО ВІДРЯДЖЕННЯ</h2>
 
-    <div class="section"><span class="label">Імʼя:</span> {{ first_name }}</div>
-    <div class="section"><span class="label">Прізвище:</span> {{ last_name }}</div>
-    <div class="section"><span class="label">Email:</span> {{ email }}</div>
+    <table>
+        <tr>
+            <td class="nowrap"><strong>ПІБ виконавця</strong></td>
+            <td colspan="3">{{ last_name }} {{ first_name }}</td>
+        </tr>
+        <tr>
+            <td class="nowrap"><strong>Email</strong></td>
+            <td colspan="3">{{ email }}</td>
+        </tr>
+        <tr>
+            <td class="nowrap"><strong>Договір / вид послуг</strong></td>
+            <td colspan="3">{{ contract }}</td>
+        </tr>
+        <tr>
+            <td class="nowrap"><strong>Проєкт</strong></td>
+            <td colspan="3">{{ project }}</td>
+        </tr>
+        <tr>
+            <td class="nowrap"><strong>Мета поїздки</strong></td>
+            <td colspan="3">{{ purpose }}</td>
+        </tr>
+        <tr>
+            <td class="nowrap"><strong>Маршрут</strong></td>
+            <td colspan="3">{{ from_city }} → {{ to_city }}</td>
+        </tr>
+        <tr>
+            <th>Дата виїзду</th>
+            <th>Час виїзду</th>
+            <th>Дата повернення</th>
+            <th>Час повернення</th>
+        </tr>
+        <tr>
+            <td>{{ from_date }}</td>
+            <td>{{ from_time }}</td>
+            <td>{{ to_date }}</td>
+            <td>{{ to_time }}</td>
+        </tr>
+        <tr>
+            <td class="nowrap"><strong>Витрати на проживання</strong></td>
+            <td>{{ housing }}</td>
+            <td class="nowrap"><strong>Витрати на проїзд</strong></td>
+            <td>{{ transport }}</td>
+        </tr>
+    </table>
 
-    <div class="section">
-        <span class="label">Маршрут:</span> {{ from_city }} → {{ to_city }}
+    <table class="no-border">
+        <tr>
+            <td><strong>Погоджено:</strong> __________________________</td>
+            <td style="text-align:right"><strong>Дата:</strong> _____________________</td>
+        </tr>
+    </table>
+
+    <div class="footer-note">
+        <p><strong>Примітка:</strong> Інформація про відрядження, надана виконавцем, буде використана для оформлення офіційного наказу та підготовки підтверджуючих документів для бухгалтерії. Надання недостовірної інформації може призвести до затримки в обробці документів або відмови у відшкодуванні витрат.</p>
     </div>
-
-    <div class="section">
-        <span class="label">Дати поїздки:</span> {{ from_date }} — {{ to_date }}
-    </div>
-
-    <div class="section">
-        <span class="label">Час виїзду / повернення:</span> {{ from_time }} → {{ to_time }}
-    </div>
-
-    <div class="section">
-        <span class="label">Проєкт:</span> {{ project }}
-    </div>
-
-    <div class="section">
-        <span class="label">Договір:</span> {{ contract }}
-    </div>
-
-    <div class="section">
-        <span class="label">Проживання:</span> {{ housing }}
-    </div>
-
-    <div class="section">
-        <span class="label">Проїзд:</span> {{ transport }}
-    </div>
-
-    <div class="section">
-        <span class="label">Мета поїздки:</span> {{ purpose }}
-    </div>
-
 </body>
 </html>
