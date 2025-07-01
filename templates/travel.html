@@ -1,18 +1,63 @@
+<!-- templates/travel.html -->
 <!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        h1 { color: #444; }
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            margin: 40px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .section {
+            margin-bottom: 15px;
+        }
+        .label {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <h1>Відрядження</h1>
-    <p><strong>Імʼя:</strong> {{ first_name }}</p>
-    <p><strong>Прізвище:</strong> {{ last_name }}</p>
-    <p><strong>Місто:</strong> {{ from_city }} → {{ to_city }}</p>
-    <p><strong>Дати:</strong> {{ from_date }} — {{ to_date }}</p>
-    <p><strong>Мета:</strong> {{ purpose }}</p>
+    <h1>Інформація про відрядження</h1>
+
+    <div class="section"><span class="label">Імʼя:</span> {{ first_name }}</div>
+    <div class="section"><span class="label">Прізвище:</span> {{ last_name }}</div>
+    <div class="section"><span class="label">Email:</span> {{ email }}</div>
+
+    <div class="section">
+        <span class="label">Маршрут:</span> {{ from_city }} → {{ to_city }}
+    </div>
+
+    <div class="section">
+        <span class="label">Дати поїздки:</span> {{ from_date }} — {{ to_date }}
+    </div>
+
+    <div class="section">
+        <span class="label">Час виїзду / повернення:</span> {{ from_time }} → {{ to_time }}
+    </div>
+
+    <div class="section">
+        <span class="label">Проєкт:</span> {{ project }}
+    </div>
+
+    <div class="section">
+        <span class="label">Договір:</span> {{ contract }}
+    </div>
+
+    <div class="section">
+        <span class="label">Проживання:</span> {{ housing }}
+    </div>
+
+    <div class="section">
+        <span class="label">Проїзд:</span> {{ transport }}
+    </div>
+
+    <div class="section">
+        <span class="label">Мета поїздки:</span> {{ purpose }}
+    </div>
+
 </body>
 </html>
