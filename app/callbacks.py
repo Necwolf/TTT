@@ -48,7 +48,10 @@ async def generate_pdf_async(data, template_name=None):
 async def handle_confirm(callback: types.CallbackQuery):
     text = callback.message.text or callback.message.caption or ""
     await callback.answer("✅ Відрядження підтверджено", show_alert=True)
-    await callback.message.edit_reply_markup()
+    try:
+        await callback.message.edit_reply_markup()
+    except Exception as e:
+        logger.warning(f"edit_reply_markup failed: {e}")
     # Извлечь ФИО из сообщения
     fio_match = re.search(r"<b>([^<]+)</b>", text)
     fio = fio_match.group(1) if fio_match else ""
