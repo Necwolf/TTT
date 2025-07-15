@@ -1,9 +1,12 @@
+import asyncio
 from aiogram import Router, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
 from app.utils import generate_pdf_from_data, generate_simple_pdf_from_data
 from app.parser import extract_data_from_message
+import logging
 
 router = Router()
+logger = logging.getLogger(__name__)
 
 
 def travel_buttons():
@@ -18,6 +21,14 @@ def travel_buttons():
             [InlineKeyboardButton(text="📤 Надіслати email", callback_data="send_email")]
         ]
     )
+
+
+async def generate_pdf_async(data, template_name=None):
+    loop = asyncio.get_event_loop()
+    if template_name:
+        return await loop.run_in_executor(None, generate_pdf_from_data, data, template_name)
+    else:
+        return await loop.run_in_executor(None, generate_simple_pdf_from_data, data)
 
 
 @router.callback_query(lambda c: c.data == "confirm_trip")
@@ -35,9 +46,7 @@ async def handle_detailed_pdf(callback: types.CallbackQuery):
     try:
         text = callback.message.text
         data = extract_data_from_message(text)
-
-        # Генерируем детальный PDF с новым шаблоном
-        pdf_path = generate_pdf_from_data(data, "travel_enhanced.html")
+        pdf_path = await generate_pdf_async(data, "travel_enhanced.html")
 
         await callback.message.answer_document(
             FSInputFile(pdf_path),
@@ -47,7 +56,7 @@ async def handle_detailed_pdf(callback: types.CallbackQuery):
 
     except Exception as e:
         await callback.answer("❌ Помилка при генерації PDF", show_alert=True)
-        print(f"Error generating detailed PDF: {e}")
+        logger.error(f"Error generating detailed PDF: {e}")
 
 
 @router.callback_query(lambda c: c.data == "send_pdf_simple")
@@ -56,9 +65,7 @@ async def handle_simple_pdf(callback: types.CallbackQuery):
     try:
         text = callback.message.text
         data = extract_data_from_message(text)
-
-        # Генерируем простой PDF со старым шаблоном
-        pdf_path = generate_simple_pdf_from_data(data)
+        pdf_path = await generate_pdf_async(data)
 
         await callback.message.answer_document(
             FSInputFile(pdf_path),
@@ -68,7 +75,7 @@ async def handle_simple_pdf(callback: types.CallbackQuery):
 
     except Exception as e:
         await callback.answer("❌ Помилка при генерації PDF", show_alert=True)
-        print(f"Error generating simple PDF: {e}")
+        logger.error(f"Error generating simple PDF: {e}")
 
 
 @router.callback_query(lambda c: c.data == "send_email")
@@ -77,9 +84,7 @@ async def handle_email(callback: types.CallbackQuery):
     try:
         text = callback.message.text
         data = extract_data_from_message(text)
-
-        # Пока просто генерируем PDF как и раньше
-        pdf_path = generate_pdf_from_data(data)
+        pdf_path = await generate_pdf_async(data, "travel_enhanced.html")
 
         await callback.message.answer_document(
             FSInputFile(pdf_path),
@@ -89,4 +94,4 @@ async def handle_email(callback: types.CallbackQuery):
 
     except Exception as e:
         await callback.answer("❌ Помилка при підготовці email", show_alert=True)
-        print(f"Error preparing email: {e}")
+        logger.error(f"Error preparing email: {e}")

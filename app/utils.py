@@ -3,6 +3,30 @@ from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
 import uuid
 from datetime import datetime
+import tempfile
+
+
+LOCALIZATION = {
+    "trip": "🚗 Відрядження",
+    "name": "Імʼя:",
+    "surname": "Прізвище:",
+    "email": "Електронна адреса:",
+    "from_city": "Місто виїзду:",
+    "to_city": "Місто надання послуг:",
+    "from_date": "Дата виїзду:",
+    "to_date": "Дата повернення:",
+    "from_time": "Година виїзду:",
+    "to_time": "Година повернення:",
+    "project": "Проєкт:",
+    "contract": "№ Договору / Вид надання послуг:",
+    "housing": "За проживання:",
+    "transport": "За проїзд:",
+    "purpose": "Мета поїздки",
+    "agenda": "Адженда",
+    "invitation": "Запрошення",
+    "confirm": "Підтвердження (Вказані дані є коректними)",
+    "confirmed": "✅ Дані підтверджено",
+}
 
 
 def flatten_fields(data):
@@ -37,6 +61,7 @@ def flatten_fields(data):
 
 
 def format_travel_message(data: dict) -> str:
+    L = LOCALIZATION
     def extract_files(field_name):
         result = []
         value = data.get(field_name)
@@ -54,27 +79,19 @@ def format_travel_message(data: dict) -> str:
         elif isinstance(value, list):
             result.extend(value)
         return result
-
-    agenda_files = extract_files("Адженда")
-    invite_files = extract_files("Запрошення")
-
-    message = f"""🚗 Відрядження
-
-👤 <b>{data.get('Імʼя:', '')} {data.get('Прізвище:', '')}</b>
-📧 {data.get('Електронна адреса:', '')}
-📍 Виїзд з: {data.get('Місто виїзду:', '')} → {data.get('Місто надання послуг:', '')}
-📅 Дата: {data.get('Дата виїзду:', '')} — {data.get('Дата повернення:', '')}
-🕓 Час: {data.get('Година виїзду:', '')} → {data.get('Година повернення:', '')}
-
-🧾 Проєкт: {data.get('Проєкт:', '')}
-📄 Договір: {data.get('№ Договору / Вид надання послуг:', '')}
-
-🏨 Проживання: {data.get('За проживання:', '')}
-🚌 Проїзд: {data.get('За проїзд:', '')}
-
-🎯 Мета: {data.get('Мета поїздки', '')}
-"""
-
+    agenda_files = extract_files(L["agenda"])
+    invite_files = extract_files(L["invitation"])
+    message = f"{L['trip']}\n\n"
+    message += f"👤 <b>{data.get(L['name'], '')} {data.get(L['surname'], '')}</b>\n"
+    message += f"📧 {data.get(L['email'], '')}\n"
+    message += f"📍 Виїзд з: {data.get(L['from_city'], '')} → {data.get(L['to_city'], '')}\n"
+    message += f"📅 Дата: {data.get(L['from_date'], '')} — {data.get(L['to_date'], '')}\n"
+    message += f"🕓 Час: {data.get(L['from_time'], '')} → {data.get(L['to_time'], '')}\n\n"
+    message += f"🧾 Проєкт: {data.get(L['project'], '')}\n"
+    message += f"📄 Договір: {data.get(L['contract'], '')}\n\n"
+    message += f"�� Проживання: {data.get(L['housing'], '')}\n"
+    message += f"🚌 Проїзд: {data.get(L['transport'], '')}\n\n"
+    message += f"🎯 Мета: {data.get(L['purpose'], '')}\n"
     def render_file_list(files, label):
         out = f"\n📎 <b>{label}:</b>\n"
         for idx, file in enumerate(files, 1):
@@ -83,15 +100,12 @@ def format_travel_message(data: dict) -> str:
             if url:
                 out += f'🔗 <a href="{url}">{name}</a>\n'
         return out
-
     if agenda_files:
-        message += render_file_list(agenda_files, "Адженда")
+        message += render_file_list(agenda_files, L["agenda"])
     if invite_files:
-        message += render_file_list(invite_files, "Запрошення")
-
-    if data.get("Підтвердження (Вказані дані є коректними)"):
-        message += "✅ Дані підтверджено"
-
+        message += render_file_list(invite_files, L["invitation"])
+    if data.get(L["confirm"]):
+        message += L["confirmed"]
     return message.strip()
 
 
@@ -177,64 +191,9 @@ def generate_pdf_from_data(data: dict, template_name: str = "travel_enhanced.htm
     html_out = template.render(template_data)
 
     # Генерация PDF
-    filename = f"/tmp/travel_enhanced_{uuid.uuid4().hex}.pdf"
-    HTML(string=html_out).write_pdf(filename)
-    return filename
-
-    # Функция для генерации номера запроса
-    def generate_req_number():
-        now = datetime.now()
-        return f"REQ-{now.strftime('%d')}/{now.strftime('%y')}"
-
-    # Функция для форматирования ответов Да/Нет
-    def format_yes_no(value):
-        if isinstance(value, str):
-            value = value.lower()
-            if value in ['так', 'yes', 'true', '1', 'да']:
-                return "Так"
-            elif value in ['ні', 'no', 'false', '0', 'нет']:
-                return "Ні"
-        return value if value else "Ні"
-
-    # Подготовка данных для шаблона
-    template_data = {
-        # Заголовок
-        "date_info": datetime.now().strftime("%d.%m.%Y"),
-        "req_number": generate_req_number(),
-
-        # Данные о исполнителе
-        "executor_name": f"{data.get('Імʼя:', '')} {data.get('Прізвище:', '')}".strip(),
-        "email": data.get("Електронна адреса:", ""),
-        "contract_info": data.get("№ Договору / Вид надання послуг:", ""),
-        "project_name": data.get("Проєкт:", ""),
-
-        # Данные о поездке
-        "service_purpose": data.get("Мета поїздки", "Надання послуг поза основним місцем ведення діяльності."),
-        "departure_city": data.get("Місто виїзду:", ""),
-        "service_city": data.get("Місто надання послуг:", ""),
-
-        # Даты и время
-        "departure_date": data.get("Дата виїзду:", ""),
-        "departure_time": data.get("Година виїзду:", ""),
-        "return_date": data.get("Дата повернення:", ""),
-        "return_time": data.get("Година повернення:", ""),
-
-        # Возмещение
-        "transport_compensation": format_yes_no(data.get("За проїзд:", "")),
-        "accommodation_compensation": format_yes_no(data.get("За проживання:", "")),
-
-        # Файлы
-        "invitation_files": format_files("Запрошення"),
-        "agenda_files": format_files("Адженда"),
-    }
-
-    # Рендеринг HTML
-    html_out = template.render(template_data)
-
-    # Генерация PDF
-    filename = f"/tmp/travel_enhanced_{uuid.uuid4().hex}.pdf"
-    HTML(string=html_out).write_pdf(filename)
-    return filename
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+        HTML(string=html_out).write_pdf(tmp.name)
+        return tmp.name
 
 
 def generate_simple_pdf_from_data(data: dict) -> str:

@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtualenv
+venv/
+env/
+ENV/
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+
+# PDF и временные файлы
+*.pdf
+*.tmp
+*.temp
+
+# Тестовые артефакты
+htmlcov/
+.coverage
+.tox/
+.pytest_cache/
+
+# WeasyPrint temp
+/tmp/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Render.com
+render.yaml.local 
