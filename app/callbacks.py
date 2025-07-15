@@ -36,6 +36,17 @@ def gmail_mailto_button(email, subject, body):
     )
 
 
+def gmail_web_url(email, subject, body):
+    from urllib.parse import quote
+    url = (
+        f"https://mail.google.com/mail/?view=cm"
+        f"&to={quote(email)}"
+        f"&su={quote(subject)}"
+        f"&body={quote(body)}"
+    )
+    return url
+
+
 async def generate_pdf_async(data, template_name=None):
     loop = asyncio.get_event_loop()
     if template_name:
@@ -60,7 +71,12 @@ async def handle_confirm(callback: types.CallbackQuery):
     fio = fio_match.group(1) if fio_match else ""
     subject = f"{fio} тест из телеграм"
     email = "reusn92@gmail.com"
-    markup = gmail_mailto_button(email, subject, text)
+    gmail_url = gmail_web_url(email, subject, text)
+    markup = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="📧 Відкрити Gmail", url=gmail_url)]
+        ]
+    )
     await callback.message.answer(
         "Натисніть кнопку нижче, щоб відкрити Gmail з підготовленим листом:",
         reply_markup=markup
