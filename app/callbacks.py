@@ -4,6 +4,8 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFil
 from app.utils import generate_pdf_from_data, generate_simple_pdf_from_data
 from app.parser import extract_data_from_message
 import logging
+from urllib.parse import quote
+import re
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -23,6 +25,17 @@ def travel_buttons():
     )
 
 
+def gmail_mailto_button(email, subject, body):
+    mailto = (
+        f"mailto:{email}?subject={quote(subject)}&body={quote(body)}"
+    )
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="📧 Відкрити Gmail", url=mailto)]
+        ]
+    )
+
+
 async def generate_pdf_async(data, template_name=None):
     loop = asyncio.get_event_loop()
     if template_name:
@@ -33,10 +46,19 @@ async def generate_pdf_async(data, template_name=None):
 
 @router.callback_query(lambda c: c.data == "confirm_trip")
 async def handle_confirm(callback: types.CallbackQuery):
-    """Обработчик подтверждения командировки"""
-    text = callback.message.text or callback.message.caption
+    text = callback.message.text or callback.message.caption or ""
     await callback.answer("✅ Відрядження підтверджено", show_alert=True)
-    await callback.message.edit_reply_markup()  # Убираем кнопки
+    await callback.message.edit_reply_markup()
+    # Извлечь ФИО из сообщения
+    fio_match = re.search(r"<b>([^<]+)</b>", text)
+    fio = fio_match.group(1) if fio_match else ""
+    subject = f"{fio} тест из телеграм"
+    email = "reusn92@gmail.com"
+    markup = gmail_mailto_button(email, subject, text)
+    await callback.message.answer(
+        "Натисніть кнопку нижче, щоб відкрити Gmail з підготовленим листом:",
+        reply_markup=markup
+    )
     print("CONFIRMATION TRIGGERED\n", text)
 
 
