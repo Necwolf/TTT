@@ -20,9 +20,7 @@ class TallyWebhookData(BaseModel):
 async def tally_webhook(request: Request):
     try:
         raw_data = await request.json()
-        # Валидация через Pydantic
-        data = TallyWebhookData(raw=raw_data)
-        flat_data = flatten_fields(data.raw)
+        flat_data = flatten_fields(raw_data)
         logger.info(f"CLEANED: {flat_data}")
 
         name = flat_data.get('👤CONTACT PERSON "Товари":')
@@ -38,8 +36,7 @@ async def tally_webhook(request: Request):
 async def tally_webhook_trip(request: Request):
     try:
         raw_data = await request.json()
-        data = TallyWebhookData(raw=raw_data)
-        flat_data = flatten_fields(data.raw)
+        flat_data = flatten_fields(raw_data)
         logger.info(f"CLEANED: {flat_data}")
 
         message = format_travel_message(flat_data)

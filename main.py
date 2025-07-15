@@ -39,12 +39,11 @@ async def up(request: Request):
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @app.post("/tally-webhook")
-async def handle_tally_webhook(request: Request, data: TallyWebhookData = Body(...)):
-    # Передаем data.raw вместо request.json()
+async def handle_tally_webhook(request: Request):
     return await tally_webhook(request)
 
 @app.post("/tally-webhook-trip")
-async def handle_tally_webhook_trip(request: Request, data: TallyWebhookData = Body(...)):
+async def handle_tally_webhook_trip(request: Request):
     return await tally_webhook_trip(request)
 
 @app.get("/")
