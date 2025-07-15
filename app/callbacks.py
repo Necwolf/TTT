@@ -47,7 +47,10 @@ async def generate_pdf_async(data, template_name=None):
 @router.callback_query(lambda c: c.data == "confirm_trip")
 async def handle_confirm(callback: types.CallbackQuery):
     text = callback.message.text or callback.message.caption or ""
-    await callback.answer("✅ Відрядження підтверджено", show_alert=True)
+    try:
+        await callback.answer("✅ Відрядження підтверджено", show_alert=True)
+    except Exception as e:
+        logger.warning(f"callback.answer failed: {e}")
     try:
         await callback.message.edit_reply_markup()
     except Exception as e:
